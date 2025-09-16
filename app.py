@@ -136,17 +136,18 @@ def main():
     
     # API Key input
     # API Key input
-    api_key = st.sidebar.text_input(
-        "OpenRouter API Key", 
-        value=st.secrets.get("OPENROUTER_API_KEY", ""),
-        type="password",
-        help="Enter your OpenRouter API key"
-    )
+    # Get API key from secrets (hidden from users)
+    try:
+        api_key = st.secrets["OPENROUTER_API_KEY"]
+        if not api_key or api_key == "your_api_key_here":
+            st.sidebar.error("⚠️ API key not configured!")
+            st.error("🔧 Application configuration error. Please contact the administrator.")
+            st.stop()
+    except Exception as e:
+        st.sidebar.error("⚠️ Configuration error!")
+        st.error("🔧 Application configuration error. Please contact the administrator.")
+        st.stop()
 
-    if not api_key:
-        st.sidebar.error("⚠️ Please enter your OpenRouter API key!")
-        st.error("Please configure your OpenRouter API key in the sidebar to continue.")
-        return
     
     # Initialize client
     client = OpenRouterClient(api_key)
